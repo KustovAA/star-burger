@@ -3,7 +3,8 @@ import json
 from django.http import JsonResponse
 from django.templatetags.static import static
 
-from .models import Product
+from foodcartapp.services.order_service import create_order
+from .models import Product, Order
 
 
 def banners_list_api(request):
@@ -59,12 +60,13 @@ def product_list_api(request):
 
 
 def register_order(request):
-    try:
-        data = json.loads(request.body.decode())
-        print(data)
-    except ValueError:
-        return JsonResponse({
-            'error': 'Bad Request',
-        })
+    data = json.loads(request.body.decode())
+    create_order(
+        first_name=data['firstname'],
+        last_name=data['lastname'],
+        address=data['address'],
+        phone_number=data['phonenumber'],
+        products=data['products']
+    )
 
-    return JsonResponse({})
+    return JsonResponse({'ok': True})
