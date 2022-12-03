@@ -61,7 +61,13 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    order_serializer = OrderSerializer(data=request.data)
+    order_serializer = OrderSerializer(data={
+        'first_name': request.data.get('firstname', None),
+        'last_name': request.data.get('lastname', None),
+        'address': request.data.get('address', None),
+        'phone_number': request.data.get('phonenumber', None),
+        'products': request.data.get('products', None),
+    })
     order_serializer.is_valid(raise_exception=True)
 
     order_serializer.save()

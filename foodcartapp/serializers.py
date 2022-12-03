@@ -10,10 +10,10 @@ class ProductSerializer(serializers.Serializer):
 
 
 class OrderSerializer(serializers.Serializer):
-    firstname = serializers.CharField(required=True, allow_null=False)
-    lastname = serializers.CharField(required=True, allow_null=False)
+    first_name = serializers.CharField(required=True, allow_null=False)
+    last_name = serializers.CharField(required=True, allow_null=False)
     address = serializers.CharField(required=True, allow_null=False)
-    phonenumber = serializers.CharField(required=True, allow_null=False)
+    phone_number = serializers.CharField(required=True, allow_null=False)
     products = ProductSerializer(
         allow_empty=False,
         allow_null=False,
@@ -23,13 +23,8 @@ class OrderSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        products = validated_data['products']
-        order = Order.objects.create(
-            first_name=validated_data['firstname'],
-            last_name=validated_data['lastname'],
-            address=validated_data['address'],
-            phone_number=validated_data['phonenumber'],
-        )
+        products = validated_data.pop('products')
+        order = Order.objects.create(**validated_data)
 
         OrderAndProduct.objects.bulk_create([
             OrderAndProduct(
@@ -39,4 +34,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        return validated_data
+        return {
+            **validated_data,
+            'products': products
+        }
