@@ -2,9 +2,10 @@ import json
 
 from django.http import JsonResponse
 from django.templatetags.static import static
+from rest_framework.decorators import api_view
 
 from foodcartapp.services.order_service import create_order
-from .models import Product, Order
+from .models import Product
 
 
 def banners_list_api(request):
@@ -59,8 +60,9 @@ def product_list_api(request):
     })
 
 
+@api_view(['POST'])
 def register_order(request):
-    data = json.loads(request.body.decode())
+    data = request.data
     create_order(
         first_name=data['firstname'],
         last_name=data['lastname'],
