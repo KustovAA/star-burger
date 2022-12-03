@@ -92,7 +92,19 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders = Order.objects.all()
+    order_items = [
+        {
+            'id': order.id,
+            'name': f'{order.first_name} {order.last_name}',
+            'phone_number': order.phone_number,
+            'address': order.address,
+            'price': sum([
+                position.product.price * position.quantity
+                for position in order.positions.prefetch_related('product').all()
+            ])
+        } for order in Order.objects.all()
+    ]
+
     return render(request, template_name='order_items.html', context={
-        'order_items': orders
+        'order_items': order_items
     })
