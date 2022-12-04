@@ -138,7 +138,7 @@ class Order(models.Model):
         verbose_name_plural = 'заказы'
 
 
-class OrderAndProduct(models.Model):
+class OrderPosition(models.Model):
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
@@ -150,6 +150,12 @@ class OrderAndProduct(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Товар',
         related_name='orders'
+    )
+    price = models.DecimalField(
+        'цена',
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
     )
     quantity = models.PositiveSmallIntegerField(verbose_name='Количество')
 

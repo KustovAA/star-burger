@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db import transaction
 
-from .models import Order, OrderAndProduct
+from .models import Order, OrderPosition, Product
 
 
 class ProductSerializer(serializers.Serializer):
@@ -26,10 +26,11 @@ class OrderSerializer(serializers.Serializer):
         products = validated_data.pop('products')
         order = Order.objects.create(**validated_data)
 
-        OrderAndProduct.objects.bulk_create([
-            OrderAndProduct(
+        order.positions.bulk_create([
+            OrderPosition(
                 order=order,
                 product_id=product['product'],
+                price=Product.objects.get(pk=product['product']).price,
                 quantity=int(product['quantity'])
             ) for product in products
         ])

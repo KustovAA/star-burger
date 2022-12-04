@@ -99,10 +99,10 @@ def view_orders(request):
             'phone_number': order.phone_number,
             'address': order.address,
             'price': sum([
-                position.product.price * position.quantity
-                for position in order.positions.prefetch_related('product').all()
+                position.price * position.quantity
+                for position in order.positions.all()
             ])
-        } for order in Order.objects.all()
+        } for order in Order.objects.prefetch_related('positions').all()
     ]
 
     return render(request, template_name='order_items.html', context={

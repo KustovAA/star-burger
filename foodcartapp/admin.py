@@ -7,16 +7,21 @@ from .models import Product
 from .models import ProductCategory
 from .models import Restaurant
 from .models import RestaurantMenuItem
-from .models import Order, OrderAndProduct
+from .models import Order, OrderPosition
+
+
+class OrderPositionInline(admin.TabularInline):
+    model = OrderPosition
+    extra = 1
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    inlines = (OrderPositionInline,)
 
 
-@admin.register(OrderAndProduct)
-class OrderAndProductAdmin(admin.ModelAdmin):
+@admin.register(OrderPosition)
+class OrderPositionAdmin(admin.ModelAdmin):
     pass
 
 
