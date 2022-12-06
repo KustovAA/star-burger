@@ -146,6 +146,7 @@ class Order(models.Model):
         verbose_name='Статус заказа',
         db_index=True
     )
+    comment = models.TextField(verbose_name='Комментарий', blank=True, default='')
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.address}"
