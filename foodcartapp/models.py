@@ -148,8 +148,20 @@ class Order(models.Model):
     )
     comment = models.TextField(verbose_name='Комментарий', blank=True, default='')
     created_at = models.DateTimeField(verbose_name='Создано', default=timezone.now)
-    called_at = models.DateTimeField(verbose_name='Первый звонок', null=True)
-    finished_at = models.DateTimeField(verbose_name='Завершено', null=True)
+    called_at = models.DateTimeField(verbose_name='Первый звонок', null=True, blank=True)
+    finished_at = models.DateTimeField(verbose_name='Завершено', null=True, blank=True)
+    OFFLINE = 'OFFLINE'
+    ONLINE = 'ONLINE'
+    PAYMENT_TYPES = [
+        (OFFLINE, 'Наличными'),
+        (ONLINE, 'Электронно'),
+    ]
+    payment_type = models.CharField(
+        max_length=50,
+        choices=PAYMENT_TYPES,
+        default=OFFLINE,
+        verbose_name='Способо оплаты'
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.address}"

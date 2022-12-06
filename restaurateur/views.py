@@ -103,7 +103,8 @@ def view_orders(request):
                 position.price * position.quantity
                 for position in order.positions.all()
             ]),
-            'comment': order.comment
+            'comment': order.comment,
+            'payment_type': dict(Order.PAYMENT_TYPES)[order.payment_type]
         } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)
     ]
 
