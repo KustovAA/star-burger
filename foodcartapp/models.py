@@ -129,6 +129,23 @@ class Order(models.Model):
     last_name = models.CharField(max_length=500, verbose_name='Фамилия')
     address = models.CharField(max_length=1000, verbose_name='Адрес')
     phone_number = PhoneNumberField(verbose_name='Номер телефона')
+    CREATED = 'CREATED'
+    COOKING = 'COOKING'
+    DELIVERY = 'DELIVERY'
+    DONE = 'DONE'
+    STATUSES = [
+        (CREATED, 'Создан'),
+        (COOKING, 'Готовится'),
+        (DELIVERY, 'У курьера'),
+        (DONE, 'Готов'),
+    ]
+    status = models.CharField(
+        max_length=50,
+        default=CREATED,
+        choices=STATUSES,
+        verbose_name='Статус заказа',
+        db_index=True
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.address}"

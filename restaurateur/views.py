@@ -95,6 +95,7 @@ def view_orders(request):
     order_items = [
         {
             'id': order.id,
+            'status': dict(Order.STATUSES)[order.status],
             'name': f'{order.first_name} {order.last_name}',
             'phone_number': order.phone_number,
             'address': order.address,
@@ -102,7 +103,7 @@ def view_orders(request):
                 position.price * position.quantity
                 for position in order.positions.all()
             ])
-        } for order in Order.objects.prefetch_related('positions').all()
+        } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)
     ]
 
     return render(request, template_name='order_items.html', context={
