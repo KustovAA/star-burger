@@ -94,18 +94,6 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    def get_available_restaurants(order):
-        Restaurant.objects.filter()
-        order_positions = order.positions.prefetch_related('product').all()
-
-        return list(set.intersection(*[
-            {
-                item.restaurant
-                for item in order_position.product.menu_items.filter(availability=True)
-            }
-            for order_position in order_positions
-        ]))
-
     order_items = [
         {
             'id': order.id,
@@ -117,7 +105,7 @@ def view_orders(request):
                 position.price * position.quantity
                 for position in order.positions.all()
             ]),
-            'available_restaurants': get_available_restaurants(order),
+            'available_restaurants': order.closest_restaurant.split(',') if order.closest_restaurant else [],
             'comment': order.comment,
             'payment_type': dict(Order.PAYMENT_TYPES)[order.payment_type]
         } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)

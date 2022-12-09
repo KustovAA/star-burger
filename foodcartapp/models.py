@@ -162,6 +162,12 @@ class Order(models.Model):
         default=OFFLINE,
         verbose_name='Способо оплаты'
     )
+    closest_restaurant = models.CharField(
+        max_length=500,
+        verbose_name='Ближайший ресторан',
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.address}"

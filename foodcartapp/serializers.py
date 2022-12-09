@@ -1,7 +1,41 @@
+from functools import cmp_to_key
+
 from rest_framework import serializers
 from django.db import transaction
 
+from restaurateur.coords import fetch_coordinates, calculate_distance
 from .models import Order, OrderPosition, Product
+from star_burger.settings import YANDEX_API_KEY
+
+
+def get_closest_restaurant(order):
+    order_positions = order.positions.prefetch_related('product').all()
+
+    restaurants = list(set.intersection(*[
+        {
+            item.restaurant
+            for item in order_position.product.menu_items.filter(availability=True)
+        }
+        for order_position in order_positions
+    ]))
+    customer_coords = fetch_coordinates(YANDEX_API_KEY, order.address)
+
+    def compare_restaurants(a, b):
+        a_distance = calculate_distance(
+            fetch_coordinates(YANDEX_API_KEY, a.address),
+            customer_coords
+        )
+        b_distance = calculate_distance(
+            fetch_coordinates(YANDEX_API_KEY, b.address),
+            customer_coords
+        )
+
+        return a_distance < b_distance
+
+    return ','.join([
+        restaurant.name
+        for restaurant in sorted(restaurants, key=cmp_to_key(compare_restaurants))
+    ])
 
 
 class ProductSerializer(serializers.Serializer):
@@ -34,6 +68,9 @@ class OrderSerializer(serializers.Serializer):
                 quantity=int(product['quantity'])
             ) for product in products
         ])
+
+        order.closest_restaurant = get_closest_restaurant(order)
+        order.save()
 
         return {
             **validated_data,
