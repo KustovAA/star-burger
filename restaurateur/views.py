@@ -1,10 +1,9 @@
-import itertools
-
 from django import forms
 from django.shortcuts import redirect, render
 from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import F
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
@@ -97,17 +96,17 @@ def view_orders(request):
     order_items = [
         {
             'id': order.id,
-            'status': dict(Order.STATUSES)[order.status],
+            'status': dict(Order.STATUSES).get(order.status, 'Не выбрано'),
             'name': f'{order.first_name} {order.last_name}',
             'phone_number': order.phone_number,
             'address': order.address,
             'price': sum([
-                position.price * position.quantity
-                for position in order.positions.all()
+                position.full_price
+                for position in order.positions.annotate(full_price=F('price') * F('quantity'))
             ]),
             'available_restaurants': order.closest_restaurant.split(',') if order.closest_restaurant else [],
             'comment': order.comment,
-            'payment_type': dict(Order.PAYMENT_TYPES)[order.payment_type]
+            'payment_type': dict(Order.PAYMENT_TYPES).get(order.payment_type, 'Не выбрано')
         } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)
     ]
 
