@@ -62,11 +62,11 @@ def product_list_api(request):
 @api_view(['POST'])
 def register_order(request):
     order_serializer = OrderSerializer(data={
-        'first_name': request.data.get('firstname', None),
-        'last_name': request.data.get('lastname', None),
-        'address': request.data.get('address', None),
-        'phone_number': request.data.get('phonenumber', None),
-        'products': request.data.get('products', None),
+        'first_name': request.data.get('firstname'),
+        'last_name': request.data.get('lastname'),
+        'address': request.data.get('address'),
+        'phone_number': request.data.get('phonenumber'),
+        'products': request.data.get('products'),
     })
     order_serializer.is_valid(raise_exception=True)
 
