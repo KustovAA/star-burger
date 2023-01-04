@@ -188,7 +188,7 @@ class OrderPosition(models.Model):
         Product,
         on_delete=models.CASCADE,
         verbose_name='Товар',
-        related_name='orders'
+        related_name='positions'
     )
     price = models.DecimalField(
         'цена',
