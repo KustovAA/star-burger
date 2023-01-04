@@ -159,7 +159,6 @@ class Order(models.Model):
     payment_type = models.CharField(
         max_length=50,
         choices=PAYMENT_TYPES,
-        default=OFFLINE,
         verbose_name='Способо оплаты'
     )
     closest_restaurant = models.CharField(
