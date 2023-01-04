@@ -32,10 +32,10 @@ def get_closest_restaurant(order):
 
         return a_distance < b_distance
 
-    return ','.join([
-        restaurant.name
+    return [
+        restaurant
         for restaurant in sorted(restaurants, key=cmp_to_key(compare_restaurants))
-    ])
+    ]
 
 
 class ProductSerializer(serializers.Serializer):
@@ -69,7 +69,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        order.closest_restaurant = get_closest_restaurant(order)
+        order.closest_restaurants.add(*get_closest_restaurant(order))
         order.save()
 
         return {

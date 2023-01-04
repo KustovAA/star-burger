@@ -164,8 +164,8 @@ class Order(models.Model):
         choices=PAYMENT_TYPES,
         verbose_name='Способо оплаты'
     )
-    closest_restaurant = models.CharField(
-        max_length=500,
+    closest_restaurants = models.ManyToManyField(
+        Restaurant,
         verbose_name='Ближайший ресторан',
         null=True,
         blank=True

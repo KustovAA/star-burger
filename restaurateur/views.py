@@ -104,7 +104,7 @@ def view_orders(request):
                 position.full_price
                 for position in order.positions.annotate(full_price=F('price') * F('quantity'))
             ]),
-            'available_restaurants': order.closest_restaurant.split(',') if order.closest_restaurant else [],
+            'available_restaurants': [restaurant.name for restaurant in order.closest_restaurants.all()],
             'comment': order.comment,
             'payment_type': dict(Order.PAYMENT_TYPES).get(order.payment_type, 'Не выбрано')
         } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)
