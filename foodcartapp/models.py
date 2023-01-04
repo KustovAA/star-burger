@@ -196,7 +196,10 @@ class OrderPosition(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)]
     )
-    quantity = models.PositiveSmallIntegerField(verbose_name='Количество')
+    quantity = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        validators=[MinValueValidator(1)]
+    )
 
     def __str__(self):
         return f"{self.product.name} - {self.order}"
