@@ -154,7 +154,7 @@ class Order(models.Model):
         verbose_name='Статус заказа',
         db_index=True
     )
-    comment = models.TextField(verbose_name='Комментарий', blank=True, default='')
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
     created_at = models.DateTimeField(verbose_name='Создано', default=timezone.now)
     called_at = models.DateTimeField(verbose_name='Первый звонок', null=True, blank=True)
     finished_at = models.DateTimeField(verbose_name='Завершено', null=True, blank=True)
