@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.core.validators import MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 class Restaurant(models.Model):
     name = models.CharField(
         'название',
