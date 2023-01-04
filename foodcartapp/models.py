@@ -125,10 +125,6 @@ class RestaurantMenuItem(models.Model):
 
 
 class Order(models.Model):
-    first_name = models.CharField(max_length=500, verbose_name='Имя')
-    last_name = models.CharField(max_length=500, verbose_name='Фамилия')
-    address = models.CharField(max_length=1000, verbose_name='Адрес')
-    phone_number = PhoneNumberField(verbose_name='Номер телефона')
     CREATED = 'CREATED'
     COOKING = 'COOKING'
     DELIVERY = 'DELIVERY'
@@ -139,6 +135,18 @@ class Order(models.Model):
         (DELIVERY, 'У курьера'),
         (DONE, 'Готов'),
     ]
+
+    OFFLINE = 'OFFLINE'
+    ONLINE = 'ONLINE'
+    PAYMENT_TYPES = [
+        (OFFLINE, 'Наличными'),
+        (ONLINE, 'Электронно'),
+    ]
+
+    first_name = models.CharField(max_length=500, verbose_name='Имя')
+    last_name = models.CharField(max_length=500, verbose_name='Фамилия')
+    address = models.CharField(max_length=1000, verbose_name='Адрес')
+    phone_number = PhoneNumberField(verbose_name='Номер телефона')
     status = models.CharField(
         max_length=50,
         default=CREATED,
@@ -150,12 +158,6 @@ class Order(models.Model):
     created_at = models.DateTimeField(verbose_name='Создано', default=timezone.now)
     called_at = models.DateTimeField(verbose_name='Первый звонок', null=True, blank=True)
     finished_at = models.DateTimeField(verbose_name='Завершено', null=True, blank=True)
-    OFFLINE = 'OFFLINE'
-    ONLINE = 'ONLINE'
-    PAYMENT_TYPES = [
-        (OFFLINE, 'Наличными'),
-        (ONLINE, 'Электронно'),
-    ]
     payment_type = models.CharField(
         max_length=50,
         choices=PAYMENT_TYPES,
@@ -168,12 +170,12 @@ class Order(models.Model):
         blank=True
     )
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.address}"
-
     class Meta:
         verbose_name = 'заказ'
         verbose_name_plural = 'заказы'
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.address}"
 
 
 class OrderPosition(models.Model):
