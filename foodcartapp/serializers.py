@@ -11,7 +11,7 @@ from star_burger.settings import YANDEX_API_KEY
 def get_closest_restaurants(order):
     order_positions = order.positions.prefetch_related('product').all()
 
-    restaurants = list(set.intersection(*[
+    available_restaurants = list(set.intersection(*[
         {
             item.restaurant
             for item in order_position.product.menu_items.filter(availability=True)
@@ -34,7 +34,7 @@ def get_closest_restaurants(order):
 
     return [
         restaurant
-        for restaurant in sorted(restaurants, key=cmp_to_key(compare_restaurants))
+        for restaurant in sorted(available_restaurants, key=cmp_to_key(compare_restaurants))
     ]
 
 
