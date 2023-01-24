@@ -20,7 +20,7 @@ def get_closest_restaurants(order):
     ]))
     customer_coords = fetch_coordinates(YANDEX_API_KEY, order.address)
 
-    def compare_restaurants(a, b):
+    def restaurants_comparator(a, b):
         a_distance = calculate_distance(
             fetch_coordinates(YANDEX_API_KEY, a.address),
             customer_coords
@@ -34,7 +34,7 @@ def get_closest_restaurants(order):
 
     return [
         restaurant
-        for restaurant in sorted(available_restaurants, key=cmp_to_key(compare_restaurants))
+        for restaurant in sorted(available_restaurants, key=cmp_to_key(restaurants_comparator))
     ]
 
 
