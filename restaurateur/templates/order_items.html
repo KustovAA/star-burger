@@ -39,11 +39,9 @@
           <details>
             <summary style="display: list-item">Может быть приготовлено ресторанами: </summary>
             <ul>
-              {% for restaurant in item.available_restaurants %}
                 <li>
-                  {{ restaurant }}
+                  {{ item.closest_restaurant }}
                 </li>
-              {% endfor %}
             </ul>
           </details>
         </td>

@@ -165,11 +165,12 @@ class Order(models.Model):
         choices=PAYMENT_TYPES,
         verbose_name='Способ оплаты'
     )
-    closest_restaurants = models.ManyToManyField(
+    closest_restaurant = models.ForeignKey(
         Restaurant,
-        verbose_name='Ближайшие рестораны',
+        verbose_name='Ближайший ресторан',
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
     class Meta:

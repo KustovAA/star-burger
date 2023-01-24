@@ -104,7 +104,7 @@ def view_orders(request):
                 position.full_price
                 for position in order.positions.with_full_price()
             ]),
-            'available_restaurants': [restaurant.name for restaurant in order.closest_restaurants.all()],
+            'closest_restaurant': order.closest_restaurant,
             'comment': order.comment,
             'payment_type': dict(Order.PAYMENT_TYPES).get(order.payment_type, 'Не выбрано')
         } for order in Order.objects.prefetch_related('positions').exclude(status=Order.DONE)

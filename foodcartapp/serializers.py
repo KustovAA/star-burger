@@ -8,7 +8,7 @@ from .models import Order, OrderPosition, Product
 from star_burger.settings import YANDEX_API_KEY
 
 
-def get_closest_restaurants(order):
+def get_closest_restaurant(order):
     order_positions = order.positions.prefetch_related('product').all()
 
     available_restaurants = list(set.intersection(*[
@@ -20,22 +20,18 @@ def get_closest_restaurants(order):
     ]))
     customer_coords = fetch_coordinates(YANDEX_API_KEY, order.address)
 
-    def restaurants_comparator(a, b):
-        a_distance = calculate_distance(
-            fetch_coordinates(YANDEX_API_KEY, a.address),
+    closest_restaurant, closest_distance = None, None
+    for restaurant in available_restaurants:
+        distance = calculate_distance(
+            fetch_coordinates(YANDEX_API_KEY, restaurant.address),
             customer_coords
         )
-        b_distance = calculate_distance(
-            fetch_coordinates(YANDEX_API_KEY, b.address),
-            customer_coords
-        )
+        if closest_restaurant is None or closest_distance > distance:
+            closest_restaurant, closest_distance = restaurant, distance
 
-        return a_distance < b_distance
+    closest_restaurant.distance = closest_distance
 
-    return [
-        restaurant
-        for restaurant in sorted(available_restaurants, key=cmp_to_key(restaurants_comparator))
-    ]
+    return closest_restaurant
 
 
 class ProductSerializer(serializers.Serializer):
@@ -69,7 +65,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        order.closest_restaurants.add(*get_closest_restaurants(order))
+        order.closest_restaurant = get_closest_restaurant(order)
         order.save()
 
         return {
