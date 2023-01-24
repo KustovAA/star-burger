@@ -8,7 +8,7 @@ from .models import Order, OrderPosition, Product
 from star_burger.settings import YANDEX_API_KEY
 
 
-def get_closest_restaurant(order):
+def get_closest_restaurants(order):
     order_positions = order.positions.prefetch_related('product').all()
 
     restaurants = list(set.intersection(*[
@@ -69,7 +69,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        order.closest_restaurants.add(*get_closest_restaurant(order))
+        order.closest_restaurants.add(*get_closest_restaurants(order))
         order.save()
 
         return {
