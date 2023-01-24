@@ -166,7 +166,7 @@ class Order(models.Model):
     )
     closest_restaurants = models.ManyToManyField(
         Restaurant,
-        verbose_name='Ближайший ресторан',
+        verbose_name='Ближайшие рестораны',
         null=True,
         blank=True
     )
