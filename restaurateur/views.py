@@ -102,7 +102,7 @@ def view_orders(request):
             'address': order.address,
             'price': sum([
                 position.full_price
-                for position in order.positions.annotate(full_price=F('price') * F('quantity'))
+                for position in order.positions.with_full_price()
             ]),
             'available_restaurants': [restaurant.name for restaurant in order.closest_restaurants.all()],
             'comment': order.comment,

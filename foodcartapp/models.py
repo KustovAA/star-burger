@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from django.core.validators import MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
@@ -179,6 +180,11 @@ class Order(models.Model):
         return f"{self.first_name} {self.last_name} - {self.address}"
 
 
+class OrderPositionManager(models.Manager):
+    def with_full_price(self):
+        return self.annotate(full_price=F('price') * F('quantity'))
+
+
 class OrderPosition(models.Model):
     order = models.ForeignKey(
         Order,
@@ -202,6 +208,8 @@ class OrderPosition(models.Model):
         verbose_name='Количество',
         validators=[MinValueValidator(1)]
     )
+
+    objects = OrderPositionManager()
 
     def __str__(self):
         return f"{self.product.name} - {self.order}"
