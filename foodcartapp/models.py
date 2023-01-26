@@ -165,9 +165,9 @@ class Order(models.Model):
         choices=PAYMENT_TYPES,
         verbose_name='Способ оплаты'
     )
-    closest_restaurant = models.ForeignKey(
+    restaurant = models.ForeignKey(
         Restaurant,
-        verbose_name='Ближайший ресторан',
+        verbose_name='Ресторан, который готовит заказ',
         null=True,
         blank=True,
         on_delete=models.SET_NULL

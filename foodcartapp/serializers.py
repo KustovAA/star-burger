@@ -65,7 +65,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        order.closest_restaurant = get_closest_restaurant(order)
+        order.restaurant = get_closest_restaurant(order)
         order.save()
 
         return {
