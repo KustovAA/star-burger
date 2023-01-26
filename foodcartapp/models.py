@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F
+from django.db.models import OuterRef, Subquery, F
 from django.utils import timezone
 from django.core.validators import MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
@@ -126,6 +126,15 @@ class RestaurantMenuItem(models.Model):
         return f"{self.restaurant.name} - {self.product.name}"
 
 
+class OrderManager(models.Manager):
+    def with_price(self):
+        prices = OrderPosition.objects.filter(id=OuterRef('id')).annotate(
+            full_price=F('price') * F('quantity')
+        ).values('full_price')
+
+        return self.annotate(price=Subquery(prices))
+
+
 class Order(models.Model):
     CREATED = 'CREATED'
     COOKING = 'COOKING'
@@ -174,17 +183,14 @@ class Order(models.Model):
         on_delete=models.SET_NULL
     )
 
+    objects = OrderManager()
+
     class Meta:
         verbose_name = 'заказ'
         verbose_name_plural = 'заказы'
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.address}"
-
-
-class OrderPositionManager(models.Manager):
-    def with_full_price(self):
-        return self.annotate(full_price=F('price') * F('quantity'))
 
 
 class OrderPosition(models.Model):
@@ -210,8 +216,6 @@ class OrderPosition(models.Model):
         verbose_name='Количество',
         validators=[MinValueValidator(1)]
     )
-
-    objects = OrderPositionManager()
 
     def __str__(self):
         return f"{self.product.name} - {self.order}"
