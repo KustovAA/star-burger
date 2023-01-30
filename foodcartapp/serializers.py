@@ -36,7 +36,7 @@ class OrderSerializer(serializers.Serializer):
             ) for product in products
         ])
 
-        order.restaurant = get_closest_restaurant(order)
+        order.active_restaurant = get_closest_restaurant(order)
         order.save()
 
         return {

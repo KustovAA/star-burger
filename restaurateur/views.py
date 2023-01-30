@@ -100,7 +100,7 @@ def view_orders(request):
             'phone_number': order.phone_number,
             'address': order.address,
             'price': order.price,
-            'restaurant': order.restaurant,
+            'restaurant': order.active_restaurant,
             'comment': order.comment,
             'payment_type': dict(Order.PAYMENT_TYPES).get(order.payment_type, 'Не выбрано')
         } for order in Order.objects.with_price().prefetch_related('positions').exclude(status=Order.DONE)

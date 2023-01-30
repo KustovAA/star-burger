@@ -174,7 +174,7 @@ class Order(models.Model):
         choices=PAYMENT_TYPES,
         verbose_name='Способ оплаты'
     )
-    restaurant = models.ForeignKey(
+    active_restaurant = models.ForeignKey(
         Restaurant,
         verbose_name='Ресторан, который готовит заказ',
         related_name='orders',
