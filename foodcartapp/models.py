@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import OuterRef, Subquery, F
+from django.db.models import Sum, F
 from django.utils import timezone
 from django.core.validators import MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
@@ -128,11 +128,7 @@ class RestaurantMenuItem(models.Model):
 
 class OrderManager(models.Manager):
     def with_price(self):
-        prices = OrderPosition.objects.filter(id=OuterRef('id')).annotate(
-            full_price=F('price') * F('quantity')
-        ).values('full_price')
-
-        return self.annotate(price=Subquery(prices))
+        return self.annotate(price=Sum(F('positions__price') * F('positions__quantity')))
 
 
 class Order(models.Model):
